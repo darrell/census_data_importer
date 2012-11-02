@@ -1,0 +1,9 @@
+bin/
+osm/
+shps/
+.bundle/
+vendor/
+tiger/
+census/
+*.tmproj
+*.bak
