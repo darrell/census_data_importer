@@ -79,6 +79,11 @@ module Census
      opts[:use_copy]=opts.fetch(:use_copy,true)
      opts[:ignore_dups]=opts.fetch(:ignore_dups,false)
      t=get_tables(tables, :as_csv => opts[:use_copy])
+     if @type == 'margin'
+       x={}
+       t.each_pair{|k,v| x["#{k}_moe"]=v;  t.delete(k)}
+       t=x
+     end
      t.each do |table,rows|
        DB.log_info "Loading table '#{table}' from sequence '#{@filename}'"
        if opts[:use_copy]
@@ -280,6 +285,24 @@ module Census
       end
     end
   end
+  
+  def create_all_error_tables
+      Census::CensusLookup.tables.each do |t|
+        DB.create_table!("#{t.id}_moe") do
+          String :fileid, :size=>6
+          String :filetype, :size=>6
+          String :stusab, :size=>2, :null=>false
+          String :chariter, :size=>3
+          String :seq, :size=>4
+          Integer :logrecno, :null=>false
+          t.columns.each do |c|
+            Float c.id
+          end
+          primary_key [:stusab, :logrecno]
+        end
+      end
+    end
+    
 
   def create_geoheader_table(files, use_copy = true)
     DB.create_table!(:geoheader) do
