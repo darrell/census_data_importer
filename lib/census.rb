@@ -1,3 +1,4 @@
+require 'csv'
 module Census
   class CensusSequenceFile
     attr_reader :type,:year,:state,:period,:sequence,:iteration,:filename
@@ -48,6 +49,8 @@ module Census
       end
       # read the file
       CSV.foreach(@filename) do |row|
+        # some census fields have '.' instead of ''. Grr.
+        row.map!{|v| v == '.' ? nil : v}
         tr.each do |k,range|
           all_tables[k] << row[0..5]+row[range]
         end
