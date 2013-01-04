@@ -1,4 +1,10 @@
 PROJECT_RUBY="ruby-1.9.3-p194"
+if [ `uname` = 'Darwin' ]; then
+  # work around an issue with macports openssl
+  # http://bugs.ruby-lang.org/issues/4373
+  export RUBYOPT='-r openssl'
+fi
+
 
 # use the global gemset in order to check for and install bundler, since we
 # don't need it to be different for different projects
@@ -16,9 +22,3 @@ fi
 rvm use $PROJECT_RUBY@data --create
 bundle check || bundle install --binstubs
 export PATH=$PWD/bin:$PATH
-if [ `uname` = 'Darwin' ]; then
-  # work around an issue with macports openssl
-  # http://bugs.ruby-lang.org/issues/4373
-  export RUBYOPT='-r openssl'
-fi
-
