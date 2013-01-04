@@ -50,7 +50,7 @@ module Census
       # read the file
       CSV.foreach(@filename) do |row|
         # some census fields have '.' instead of ''. Grr.
-        row.map!{|v| v == '.' ? nil : v}
+        row.map!{|v| v=='.' || v=='' ? nil : v}
         tr.each do |k,range|
           all_tables[k] << row[0..5]+row[range]
         end
@@ -227,18 +227,21 @@ module Census
       String :table_title
       String :subject_area
     end
-
+    cols=[:file_id, :table_id, :sequence_no,
+            :line_no, :start_pos, :cells_in_table, :cells_in_sequence, 
+            :table_title, :subject_area]
     if use_copy
       DB.copy_into(:census_lookup, 
-        :columns => [:file_id, :table_id, :sequence_no,
-                    :line_no, :start_pos, :cells_in_table, :cells_in_sequence, 
-                    :table_title, :subject_area], 
+        :columns => cols,
         :format => :csv, 
         :options => "HEADER,ENCODING 'LATIN-1'",
         :data => File.open(file))
     else
-      CSV.each(file) do |row|
-        DB[:census_lookup].insert row
+      CSV.open(file, 'r:ISO-8859-1',:headers => true).each do |row|
+        x= row.fields.map{|x| x=='.' || x=='' ? nil : x}
+        puts Hash[cols.zip(x)]
+        DB[:census_lookup].insert Hash[cols.zip(x)]
+
       end
     end
 
