@@ -39,14 +39,14 @@ the state of the California. By looking through `census_column_lookup` or the
 ACS website, we find that the table we are after is "B01001": "SEX BY AGE". That gives us (edited down for space):
 
 ```sql
-SELECT table_id,
-       column_id,
-       column_title,
-       topic,
-       table_universe,
-       subject_area
+SELECT "table_id",
+       "column_id",
+       "column_title",
+       "topic",
+       "table_universe",
+       "subject_area"
 FROM "acs2011_5yr"."census_column_lookup"
-WHERE table_id='B01001';
+WHERE "table_id"='B01001';
 ```
 
 <table border="1">
@@ -134,12 +134,15 @@ intuition, or look the table up on FactFinder, which displays the headings
 appropriately indented.
 
 So, from this we can see that the male population is in column "B010010002"
-and the female population in column "B010010026". So to get those columns we could do:
+and the female population in column "B010010026". (If we had wanted the female
+population aged 10-14, then we could have chosen "B010010029").
+
+So to get those population columns we could do:
 
 ```sql
-SELECT "B010010002" as male_pop,
-       "B010010026" as female_pop
-FROM "acs2011_5yr"."B01001" as pop;
+SELECT "B010010002" AS male_pop,
+       "B010010026" AS female_pop
+FROM "acs2011_5yr"."B01001" AS pop;
 ```
 
 However, that does not tell us anything about what geographical area that
@@ -152,24 +155,24 @@ desired, which is especially critical if you want to join more than
 one data table, just in case there is data missing from the table. For example:
 
 ```sql
-SELECT geo.name,
-        "B010010002" as male_pop,
-       "B010010026" as female_pop
-FROM "acs2011_5yr"."geoheader" as geo
-  LEFT OUTER JOIN "acs2011_5yr"."B01001" as pop
-  ON (geo.logrecno=pop.logrecno AND geo.stusab=pop.stusab);
+SELECT "geo"."name",
+       "B010010002" AS male_pop,
+       "B010010026" AS female_pop
+FROM "acs2011_5yr"."geoheader" AS geo
+LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON (geo.logrecno=pop.logrecno
+                                                  AND geo.stusab=pop.stusab);
 ```
 
 Finally, if we want to limit the data to just california counties, then we
 must add the appropriate `WHERE` clauses:
 
 ```sql
-SELECT geo.name,
-        "B010010002" as male_pop,
-       "B010010026" as female_pop
-FROM "acs2011_5yr"."geoheader" as geo
-  LEFT OUTER JOIN "acs2011_5yr"."B01001" as pop
-  ON (geo.logrecno=pop.logrecno AND upper(geo.stusab)=upper(pop.stusab))
+SELECT "geo"."name",
+       "B010010002" AS male_pop,
+       "B010010026" AS female_pop
+FROM "acs2011_5yr"."geoheader" AS geo
+LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON (geo.logrecno=pop.logrecno
+                                                  AND upper(geo.stusab)=upper(pop.stusab))
 WHERE geo.stusab='ca'
   AND geo.sumlevel = '50';
 ```
@@ -178,13 +181,13 @@ If you have loaded Census TIGER data and want to join to that, then you must als
 the `geoid_tiger` column (not the `geoid` column, because that would be too easy).
 
 ```sql
-SELECT geo.name,
-        "B010010002" as male_pop,
-       "B010010026" as female_pop
-FROM "acs2011_5yr"."geoheader" as geo
-  LEFT OUTER JOIN "acs2011_5yr"."B01001" as pop
-    ON (geo.logrecno=pop.logrecno AND upper(geo.stusab)=upper(pop.stusab))
-  JOIN "tiger"."county" co ON co.geoid = geo.geoid_tiger
+SELECT "geo"."name",
+       "B010010002" AS male_pop,
+       "B010010026" AS female_pop
+FROM "acs2011_5yr"."geoheader" AS geo
+LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON (geo.logrecno=pop.logrecno
+                                                  AND upper(geo.stusab)=upper(pop.stusab))
+JOIN "tiger"."county" co ON co.geoid = geo.geoid_tiger
 WHERE geo.stusab='ca'
   AND geo.sumlevel = '50';
 ```
