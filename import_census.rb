@@ -41,7 +41,7 @@ create_all_estimate_tables
 # end
 
 # import ACS 2011 5yr data.
-sequences=Dir["#{census_dir}/**/e20115*.txt"].sort.map do |s|
+sequences=Dir["#{census_dir}/**/*20115*.txt"].sort.map do |s|
   Census::CensusSequenceFile.new(s)
 end
 
