@@ -366,7 +366,8 @@ module Census
       String :btbg, :size=>1
       String :blank8, :size=>50
       primary_key [:stusab, :logrecno]
-    end
+      index :geoid, :unique=>true
+  end
 
     files.sort.each do |s|
       DB.log_info "Processing geoheader #{s}"
@@ -386,8 +387,18 @@ module Census
       end
     end
 
+    DB.alter_table(:geoheader) do
+      add_column  :geoid_tiger, String, :size=>40
+      add_index   :geoid_tiger
+    end
+
     # for some unbeknowst reason, the geoheader is upcase whereas the
     # data tables are downcased.
-    DB[:geoheader].update(:stusab => Sequel.function(:lower, :stusab))
+    DB[:geoheader].update(:stusab => Sequel.function(:lower, :stusab),
+                          :geoid_tiger => Sequel.function(:split_part,:geoid,'US',2))
+
+    DB.alter_table(:geoheader) do
+    end
+
   end
 end
