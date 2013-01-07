@@ -373,6 +373,7 @@ module Census
       DB.transaction do 
         csv=[]
         parse_geography_file(s).each do |row|
+          row.map!{|v| v=='.' || v=='' ? nil : v}
           if use_copy
             csv << row.to_csv
           else
