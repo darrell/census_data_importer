@@ -394,11 +394,11 @@ module Census
 
     # for some unbeknowst reason, the geoheader is upcase whereas the
     # data tables are downcased.
+    # for some different unbeknownst reason, the geoid field is not
+    # directly joinable to the geoid in the TIGER data, so we create
+    # a field for that, which we can join on.
     DB[:geoheader].update(:stusab => Sequel.function(:lower, :stusab),
                           :geoid_tiger => Sequel.function(:split_part,:geoid,'US',2))
-
-    DB.alter_table(:geoheader) do
-    end
 
   end
 end
