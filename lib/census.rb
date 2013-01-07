@@ -385,5 +385,9 @@ module Census
         end
       end
     end
+
+    # for some unbeknowst reason, the geoheader is upcase whereas the
+    # data tables are downcased.
+    DB[:geoheader].update(:stusab => Sequel.function(:lower, :stusab))
   end
 end
