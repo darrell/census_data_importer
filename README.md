@@ -171,8 +171,8 @@ SELECT "geo"."name",
        "B010010002" AS male_pop,
        "B010010026" AS female_pop
 FROM "acs2011_5yr"."geoheader" AS geo
-LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON (geo.logrecno=pop.logrecno
-                                                  AND upper(geo.stusab)=upper(pop.stusab))
+LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON ("geo"."logrecno"="pop"."logrecno"
+                                                  AND "geo"."stusab"="pop"."stusab")
 WHERE geo.stusab='ca'
   AND geo.sumlevel = '50';
 ```
@@ -183,11 +183,33 @@ the `geoid_tiger` column (not the `geoid` column, because that would be too easy
 ```sql
 SELECT "geo"."name",
        "B010010002" AS male_pop,
-       "B010010026" AS female_pop
+       "B010010026" AS female_pop,
+       "co"."the_geom"
 FROM "acs2011_5yr"."geoheader" AS geo
-LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON (geo.logrecno=pop.logrecno
-                                                  AND upper(geo.stusab)=upper(pop.stusab))
+LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON ("geo"."logrecno"="pop"."logrecno"
+                                                  AND "geo"."stusab"="pop"."stusab")
 JOIN "tiger"."county" co ON co.geoid = geo.geoid_tiger
 WHERE geo.stusab='ca'
   AND geo.sumlevel = '50';
 ```
+
+Finally, if you want to get the margin of error for any estimate, those are located
+in the `TABLE_moe` table with the same column name:
+
+```sql
+SELECT "geo"."name",
+       "pop"."B010010002" AS male_pop,
+       "pop_moe"."B010010002" AS male_pop_moe,
+       "pop"."B010010026" AS female_pop,
+       "pop_moe"."B010010026" AS female_pop_moe,
+       "co"."the_geom"
+FROM "acs2011_5yr"."geoheader" AS geo
+LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON ("geo"."logrecno"="pop"."logrecno"
+                                                  AND "geo"."stusab"="pop"."stusab")
+LEFT OUTER JOIN "acs2011_5yr"."B01001_moe" AS pop_moe ON ("geo"."logrecno"="pop_moe"."logrecno"
+                                                  AND "geo"."stusab"="pop_moe"."stusab")
+JOIN "tiger"."county" co ON co.geoid = geo.geoid_tiger
+WHERE geo.stusab='ca'
+  AND geo.sumlevel = '50';
+```
+
