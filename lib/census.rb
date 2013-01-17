@@ -16,6 +16,15 @@ module Census
       end
     end
 
+    def cleanup_row(row)
+      row.map do |v|
+        case v
+        when '' then nil
+        when '.' then -2
+        else v
+        end
+      end
+    end
     # return a hash containing a table_name and a Range for the columns that go with that table:
     # e.g. {:table1 => 7..15, :table2 => 16..32}
     def table_ranges(table=:all)
@@ -49,8 +58,7 @@ module Census
       end
       # read the file
       CSV.foreach(@filename) do |row|
-        # some census fields have '.' instead of ''. Grr.
-        row.map!{|v| v=='.' || v=='' ? nil : v}
+        row = cleanup_row(row)
         tr.each do |k,range|
           all_tables[k] << row[0..5]+row[range]
         end
@@ -69,7 +77,7 @@ module Census
       else
         all_tables
       end
-   end
+    end
 
    # load into appropriate DB tables
    # each census table in this sequence file
@@ -126,7 +134,7 @@ module Census
         sequence: #{sequence}
         iteration: #{iteration}
       }
-    end
+   end
    
     def open(*args, &block)
       File.open(@filename, *args, &block)
@@ -238,8 +246,8 @@ module Census
         :data => File.open(file))
     else
       CSV.open(file, 'r:ISO-8859-1',:headers => true).each do |row|
-        x= row.fields.map{|x| x=='.' || x=='' ? nil : x}
-        puts Hash[cols.zip(x)]
+        x = cleanup_row(row.fields)
+        # puts Hash[cols.zip(x)]
         DB[:census_lookup].insert Hash[cols.zip(x)]
 
       end
@@ -293,22 +301,22 @@ module Census
   end
   
   def create_all_error_tables
-      Census::CensusLookup.tables.each do |t|
-        DB.create_table!("#{t.id}_moe") do
-          String :fileid, :size=>6
-          String :filetype, :size=>6
-          String :stusab, :size=>2, :null=>false
-          String :chariter, :size=>3
-          String :seq, :size=>4
-          Integer :logrecno, :null=>false
-          t.columns.each do |c|
-            Float c.id
-          end
-          primary_key [:stusab, :logrecno]
+    Census::CensusLookup.tables.each do |t|
+      DB.create_table!("#{t.id}_moe") do
+        String :fileid, :size=>6
+        String :filetype, :size=>6
+        String :stusab, :size=>2, :null=>false
+        String :chariter, :size=>3
+        String :seq, :size=>4
+        Integer :logrecno, :null=>false
+        t.columns.each do |c|
+          Float c.id
         end
+        primary_key [:stusab, :logrecno]
       end
     end
-    
+  end
+  
 
   def create_geoheader_table(files, use_copy = true)
     DB.create_table!(:geoheader) do
@@ -374,7 +382,7 @@ module Census
       DB.transaction do 
         csv=[]
         parse_geography_file(s).each do |row|
-          row.map!{|v| v=='.' || v=='' ? nil : v}
+          row = cleanup_row(row)
           if use_copy
             csv << row.to_csv
           else

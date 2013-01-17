@@ -20,6 +20,20 @@ Look at the import_census.rb script to get the workflow.
 
 It is *slow*, and I'm sorry I can't help much with that – blame the ruby CSV parser.
 
+Caveats
+=======
+
+Please read Appendix C of the [ACS Technical Documentation](http://www2.census.gov/acs2011_5yr/summaryfile/ACS_2007_2011_SF_Tech_Doc.pdf).
+Actually, read the whole thing.
+
+Because in postgres we are storing the fields as numbers, we cannot use "." as a jam value
+to indicate that the sample is too small. Instead, we have replaced that with '-2'.
+
+All numbers are stored as double precision, so disk usage can get rather high. If you
+have a suggestion for a way to work around that and use integers whenver possible,
+I'd like to hear it.
+
+
 Using imported data
 ===================
 
