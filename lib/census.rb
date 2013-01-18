@@ -222,7 +222,7 @@ module Census
     ret #.map{|x| x.join("\t")}
   end
   
-  def create_lookup_tables(file, use_copy = true)
+  def create_lookup_tables(file, use_copy = false)
     DB.create_table! :census_lookup do
       primary_key :id
       String :file_id, :size => 10
@@ -246,7 +246,7 @@ module Census
         :data => File.open(file))
     else
       CSV.open(file, 'r:ISO-8859-1',:headers => true).each do |row|
-        x = cleanup_row(row.fields)
+        x = row.fields.map{|v| v=='.' || v=='' ? nil : v}
         # puts Hash[cols.zip(x)]
         DB[:census_lookup].insert Hash[cols.zip(x)]
 
@@ -318,6 +318,15 @@ module Census
   end
   
 
+    def cleanup_row(row)
+      row.map do |v|
+        case v
+        when '' then nil
+        when '.' then -2
+        else v
+        end
+      end
+    end
   def create_geoheader_table(files, use_copy = true)
     DB.create_table!(:geoheader) do
       String :fileid, :size=>6
