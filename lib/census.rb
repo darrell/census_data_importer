@@ -283,9 +283,16 @@ module Census
     
   end
 
-  def create_all_estimate_tables
+  def create_all_estimate_tables(suffix='')
+    float_tables=%w{
+      B01002 B01002A B01002B B01002C B01002D B01002E B01002F B01002G
+      B01002H B01002I B05004 B06002 B07002 B07402 B08103 B08503 B12007
+      B19082 B19083 B23013 B23020 B25010 B25018 B25021 B25071 B25092
+      B98011 B98012 B98021 B98022 B98031 B98032
+    }
+
     Census::CensusLookup.tables.each do |t|
-      DB.create_table!(t.id) do
+      DB.create_table!("#{t.id}#{suffix}".to_sym) do
         String :fileid, :size=>6
         String :filetype, :size=>6
         String :stusab, :size=>2, :null=>false
@@ -293,7 +300,11 @@ module Census
         String :seq, :size=>4
         Integer :logrecno, :null=>false
         t.columns.each do |c|
-          Float c.id
+          if float_tables.include? t.id.to_s
+            Float c.id
+          else
+            Integer c.id
+          end
         end
         primary_key [:stusab, :logrecno]
       end
@@ -301,20 +312,7 @@ module Census
   end
   
   def create_all_error_tables
-    Census::CensusLookup.tables.each do |t|
-      DB.create_table!("#{t.id}_moe") do
-        String :fileid, :size=>6
-        String :filetype, :size=>6
-        String :stusab, :size=>2, :null=>false
-        String :chariter, :size=>3
-        String :seq, :size=>4
-        Integer :logrecno, :null=>false
-        t.columns.each do |c|
-          Float c.id
-        end
-        primary_key [:stusab, :logrecno]
-      end
-    end
+    create_all_estimate_tables('_moe')
   end
   
 
