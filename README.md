@@ -11,8 +11,7 @@ have not tested it.
 The only gems required are 'pg' and 'sequel'.
 
 There is one caveat, you must download the "[Sequence_Number_and_Table_Number_
-Lookup.txt](ftp://ftp.census.gov/acs2011_5yr/summaryfile/Sequence_Number_and_T
-able_Number_Lookup.txt]" file as well as any census data. This table is used
+Lookup.txt](ftp://ftp.census.gov/acs2011_5yr/summaryfile/Sequence_Number_and_Table_Number_Lookup.txt]" file as well as any census data. This table is used
 to generate two tables, which the importer script then uses to create and
 import the rest of the tables.
 
@@ -27,12 +26,9 @@ Please read Appendix C of the [ACS Technical Documentation](http://www2.census.g
 Actually, read the whole thing.
 
 Because in postgres we are storing the fields as numbers, we cannot use "." as a jam value
-to indicate that the sample is too small. Instead, we have replaced that with '-2'.
+to indicate that the sample is too small, as is the case in the distributed files.. Instead, we have replaced that with '-2'.
 
-All numbers are stored as double precision, so disk usage can get rather high. If you
-have a suggestion for a way to work around that and use integers whenver possible,
-I'd like to hear it.
-
+All numbers are stored as integers or doubles where possible. Otherwise as double precision floats.
 
 Using imported data
 ===================
