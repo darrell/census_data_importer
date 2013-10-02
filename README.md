@@ -10,7 +10,7 @@ have not tested it.
 
 The only gems required are 'pg' and 'sequel'.
 
-There is one caveat, you must download the "[Sequence_Number_and_Table_Number_Lookup.txt](ftp://ftp.census.gov/acs2011_5yr/summaryfile/Sequence_Number_and_Table_Number_Lookup.txt)" 
+There is one caveat, you must download the [Sequence_Number_and_Table_Number_Lookup.txt](ftp://ftp.census.gov/acs2011_5yr/summaryfile/Sequence_Number_and_Table_Number_Lookup.txt)
 file as well as any census data. This table is used
 to generate two tables, which the importer script then uses to create and
 import the rest of the tables.
