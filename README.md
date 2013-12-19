@@ -69,32 +69,32 @@ WHERE "table_id"='B01001';
     <th align="center">subject_area</th>
   </tr>
   <tr valign="top">
-    <td align="left">B01001</td>
-    <td align="left">B010010001</td>
+    <td align="left">b01001</td>
+    <td align="left">b010010001</td>
     <td align="left">Total:</td>
     <td align="left">SEX BY AGE</td>
     <td align="left">Total population</td>
     <td align="left">[NULL]</td>
   </tr>
   <tr valign="top">
-    <td align="left">B01001</td>
-    <td align="left">B010010002</td>
+    <td align="left">b01001</td>
+    <td align="left">b010010002</td>
     <td align="left">Male:</td>
     <td align="left">SEX BY AGE</td>
     <td align="left">Total population</td>
     <td align="left">[NULL]</td>
   </tr>
   <tr valign="top">
-    <td align="left">B01001</td>
-    <td align="left">B010010003</td>
+    <td align="left">b01001</td>
+    <td align="left">b010010003</td>
     <td align="left">Under 5 years</td>
     <td align="left">SEX BY AGE</td>
     <td align="left">Total population</td>
     <td align="left">[NULL]</td>
   </tr>
   <tr valign="top">
-    <td align="left">B01001</td>
-    <td align="left">B010010004</td>
+    <td align="left">b01001</td>
+    <td align="left">b010010004</td>
     <td align="left">5 to 9 years</td>
     <td align="left">SEX BY AGE</td>
     <td align="left">Total population</td>
@@ -102,32 +102,32 @@ WHERE "table_id"='B01001';
   </tr>
 
   <tr valign="top">
-    <td align="left">B01001</td>
-    <td align="left">B010010026</td>
+    <td align="left">b01001</td>
+    <td align="left">b010010026</td>
     <td align="left">Female:</td>
     <td align="left">SEX BY AGE</td>
     <td align="left">Total population</td>
     <td align="left">[NULL]</td>
   </tr>
   <tr valign="top">
-    <td align="left">B01001</td>
-    <td align="left">B010010027</td>
+    <td align="left">b01001</td>
+    <td align="left">b010010027</td>
     <td align="left">Under 5 years</td>
     <td align="left">SEX BY AGE</td>
     <td align="left">Total population</td>
     <td align="left">[NULL]</td>
   </tr>
   <tr valign="top">
-    <td align="left">B01001</td>
-    <td align="left">B010010028</td>
+    <td align="left">b01001</td>
+    <td align="left">b010010028</td>
     <td align="left">5 to 9 years</td>
     <td align="left">SEX BY AGE</td>
     <td align="left">Total population</td>
     <td align="left">[NULL]</td>
   </tr>
   <tr valign="top">
-    <td align="left">B01001</td>
-    <td align="left">B010010029</td>
+    <td align="left">b01001</td>
+    <td align="left">b010010029</td>
     <td align="left">10 to 14 years</td>
     <td align="left">SEX BY AGE</td>
     <td align="left">Total population</td>
@@ -143,16 +143,16 @@ tells us that what follows is a subset of a previous column that ended with a
 intuition, or look the table up on FactFinder, which displays the headings
 appropriately indented.
 
-So, from this we can see that the male population is in column "B010010002"
-and the female population in column "B010010026". (If we had wanted the female
+So, from this we can see that the male population is in column "b010010002"
+and the female population in column "b010010026". (If we had wanted the female
 population aged 10-14, then we could have chosen "B010010029").
 
 So to get those population columns we could do:
 
 ```sql
-SELECT "B010010002" AS male_pop,
-       "B010010026" AS female_pop
-FROM "acs2011_5yr"."B01001" AS pop;
+SELECT "b010010002" AS male_pop,
+       "b010010026" AS female_pop
+FROM "acs2011_5yr"."b01001" AS pop;
 ```
 
 However, that does not tell us anything about what geographical area that
@@ -166,10 +166,10 @@ one data table, just in case there is data missing from the table. For example:
 
 ```sql
 SELECT "geo"."name",
-       "B010010002" AS male_pop,
-       "B010010026" AS female_pop
+       "b010010002" AS male_pop,
+       "b010010026" AS female_pop
 FROM "acs2011_5yr"."geoheader" AS geo
-LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON (geo.logrecno=pop.logrecno
+LEFT OUTER JOIN "acs2011_5yr"."b01001" AS pop ON (geo.logrecno=pop.logrecno
                                                   AND geo.stusab=pop.stusab);
 ```
 
@@ -178,10 +178,10 @@ must add the appropriate `WHERE` clauses:
 
 ```sql
 SELECT "geo"."name",
-       "B010010002" AS male_pop,
-       "B010010026" AS female_pop
+       "b010010002" AS male_pop,
+       "b010010026" AS female_pop
 FROM "acs2011_5yr"."geoheader" AS geo
-LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON ("geo"."logrecno"="pop"."logrecno"
+LEFT OUTER JOIN "acs2011_5yr"."b01001" AS pop ON ("geo"."logrecno"="pop"."logrecno"
                                                   AND "geo"."stusab"="pop"."stusab")
 WHERE geo.stusab='ca'
   AND geo.sumlevel = '50';
@@ -192,11 +192,11 @@ the `geoid_tiger` column (not the `geoid` column, because that would be too easy
 
 ```sql
 SELECT "geo"."name",
-       "B010010002" AS male_pop,
-       "B010010026" AS female_pop,
+       "b010010002" AS male_pop,
+       "b010010026" AS female_pop,
        "co"."the_geom"
 FROM "acs2011_5yr"."geoheader" AS geo
-LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON ("geo"."logrecno"="pop"."logrecno"
+LEFT OUTER JOIN "acs2011_5yr"."b01001" AS pop ON ("geo"."logrecno"="pop"."logrecno"
                                                   AND "geo"."stusab"="pop"."stusab")
 JOIN "tiger"."county" co ON co.geoid = geo.geoid_tiger
 WHERE geo.stusab='ca'
@@ -208,15 +208,15 @@ in the `TABLE_moe` table with the same column name:
 
 ```sql
 SELECT "geo"."name",
-       "pop"."B010010002" AS male_pop,
-       "pop_moe"."B010010002" AS male_pop_moe,
-       "pop"."B010010026" AS female_pop,
-       "pop_moe"."B010010026" AS female_pop_moe,
+       "pop"."b010010002" AS male_pop,
+       "pop_moe"."b010010002" AS male_pop_moe,
+       "pop"."b010010026" AS female_pop,
+       "pop_moe"."b010010026" AS female_pop_moe,
        "co"."the_geom"
 FROM "acs2011_5yr"."geoheader" AS geo
-LEFT OUTER JOIN "acs2011_5yr"."B01001" AS pop ON ("geo"."logrecno"="pop"."logrecno"
+LEFT OUTER JOIN "acs2011_5yr"."b01001" AS pop ON ("geo"."logrecno"="pop"."logrecno"
                                                   AND "geo"."stusab"="pop"."stusab")
-LEFT OUTER JOIN "acs2011_5yr"."B01001_moe" AS pop_moe ON ("geo"."logrecno"="pop_moe"."logrecno"
+LEFT OUTER JOIN "acs2011_5yr"."b01001_moe" AS pop_moe ON ("geo"."logrecno"="pop_moe"."logrecno"
                                                   AND "geo"."stusab"="pop_moe"."stusab")
 JOIN "tiger"."county" co ON co.geoid = geo.geoid_tiger
 WHERE geo.stusab='ca'
