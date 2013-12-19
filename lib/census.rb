@@ -96,6 +96,7 @@ module Census
        t=x
      end
      t.each do |table,rows|
+       table=table.downcase
        DB.log_info "Loading table '#{table}' from sequence '#{@filename}'"
        if opts[:use_copy]
          begin
@@ -199,7 +200,7 @@ module Census
         ds=ds.filter(:sequence_no => seq)
       end
       ds.each do |x|
-        ret<<x[:table_id]
+        ret<<x[:table_id.downcase]
       end
       ret
     end
@@ -246,7 +247,7 @@ module Census
         :data => File.open(file))
     else
       CSV.open(file, 'r:ISO-8859-1',:headers => true).each do |row|
-        x = row.fields.map{|v| v=='.' || v=='' ? nil : v}
+        x = row.fields.map{|v| v=='.' || v=='' || v=~/^\s+$/ ? nil : v}
         # puts Hash[cols.zip(x)]
         DB[:census_lookup].insert Hash[cols.zip(x)]
 
@@ -292,7 +293,7 @@ module Census
     }
 
     Census::CensusLookup.tables.each do |t|
-      DB.create_table!("#{t.id}#{suffix}".to_sym) do
+      DB.create_table!("#{t.id}#{suffix}".downcase.to_sym) do
         String :fileid, :size=>6
         String :filetype, :size=>6
         String :stusab, :size=>2, :null=>false
@@ -301,9 +302,9 @@ module Census
         Integer :logrecno, :null=>false
         t.columns.each do |c|
           if float_tables.include? t.id.to_s
-            Float c.id
+            Float c.id.downcase
           else
-            Integer c.id
+            Integer c.id.downcase
           end
         end
         primary_key [:stusab, :logrecno]
