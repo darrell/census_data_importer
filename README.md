@@ -2,11 +2,13 @@ Overview
 ========
 This is a set of quick and dirty scripts for loading census ACS data into a postgres database.
 
-I've tested it on ACS2010_5yr data, and ACS2011_5yr data, using ruby 1.9.3.
+I've tested it on ACS2010_5yr data, ACS2011_5yr, and ACS2011_5yr data, using ruby 1.9.3, and ruby 2.3.0.
 Ruby 1.8.7 will probably work, but given how painfully slow the CSV module is,
 you'll want to take steps to update that to FasterCSV. Other databases may
 well work, as long as you specify `:use_copy => false` where appropriate, but I
 have not tested it.
+
+Sequel version 4.x does not work, and I have not yet investigated why.
 
 The only gems required are 'pg' and 'sequel'.
 

@@ -4,4 +4,4 @@ source "https://rubygems.org"
 # gem "rails"
 gem "rake"
 gem "pg"
-gem "sequel"
+gem "sequel", '3.40.0'
