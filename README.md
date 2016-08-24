@@ -24,7 +24,7 @@ It is *slow*, and I'm sorry I can't help much with that – blame the ruby CSV p
 Caveats
 =======
 
-Please read Appendix C of the [ACS Technical Documentation](http://www2.census.gov/acs2011_5yr/summaryfile/ACS_2007_2011_SF_Tech_Doc.pdf).
+Please read Appendix C of the [ACS Technical Documentation](http://www2.census.gov/programs-surveys/acs/summary_file/2011/documentation/5_year/ACS_2007-2011_SF_Tech_Doc.pdf).
 Actually, read the whole thing.
 
 Because in postgres we are storing the fields as numbers, we cannot use "." as a jam value
