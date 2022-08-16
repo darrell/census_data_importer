@@ -1,17 +1,17 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    pg (0.18.4)
+    pg (1.4.3)
     rake (11.1.2)
-    sequel (3.40.0)
+    sequel (3.48.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  pg
+  pg (= 1.4.3)
   rake
-  sequel (= 3.40.0)
+  sequel (= 3.48.0)
 
 BUNDLED WITH
-   1.11.2
+   1.17.2
